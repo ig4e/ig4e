@@ -279,5 +279,5 @@ In 2018, I took the plunge into the world of custom Discord bots, immersing myse
 [![ig4e's GitHub stats](https://github-readme-stats.vercel.app/api?username=ig4e&count_private=true&theme=transparent)](https://github.com/anuraghazra/github-readme-stats)
 
 <p align="center">
-    <img src="https://count.getloli.com/get/@ig4e-github">
+    <img src="https://count.getloli.com/get/@ig4e-github?theme=rule34">
 </p>
