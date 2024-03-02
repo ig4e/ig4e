@@ -206,7 +206,6 @@ In 2018, I took the plunge into the world of custom Discord bots, immersing myse
 <p align="left">
 	<a href="https://discord.com/users/ig4e" target="_blank" rel="noreferrer">
 		<picture>
-			<source media="(prefers-color-scheme: dark)" srcset="undefined" />
 			<source
 				media="(prefers-color-scheme: light)"
 				srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/discord.svg"
@@ -220,7 +219,6 @@ In 2018, I took the plunge into the world of custom Discord bots, immersing myse
 	</a>
 	<a href="https://www.dribbble.com/Sekai966" target="_blank" rel="noreferrer">
 		<picture>
-			<source media="(prefers-color-scheme: dark)" srcset="undefined" />
 			<source
 				media="(prefers-color-scheme: light)"
 				srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/dribbble.svg"
@@ -251,7 +249,6 @@ In 2018, I took the plunge into the world of custom Discord bots, immersing myse
 	</a>
 	<a href="https://www.stackoverflow.com/users/13357873/ig4e" target="_blank" rel="noreferrer">
 		<picture>
-			<source media="(prefers-color-scheme: dark)" srcset="undefined" />
 			<source
 				media="(prefers-color-scheme: light)"
 				srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/stackoverflow.svg"
@@ -265,7 +262,6 @@ In 2018, I took the plunge into the world of custom Discord bots, immersing myse
 	</a>
 	<a href="https://www.youtube.com/@Sekai966" target="_blank" rel="noreferrer">
 		<picture>
-			<source media="(prefers-color-scheme: dark)" srcset="undefined" />
 			<source
 				media="(prefers-color-scheme: light)"
 				srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/youtube.svg"
@@ -278,6 +274,7 @@ In 2018, I took the plunge into the world of custom Discord bots, immersing myse
 		</picture>
 	</a>
 </p>
+
 
 [![ig4e's wakatime stats](https://github-readme-stats.vercel.app/api/wakatime?username=ig4e&theme=transparent)](https://github.com/anuraghazra/github-readme-stats)
 
