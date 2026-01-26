@@ -13,29 +13,34 @@ jobs:
     
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
         with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: pip install PyGithub cryptography
+          go-version: '>=1.21'
+          cache: true
 
       - name: Fetch previous cache from stats branch
         continue-on-error: true
         run: |
           git fetch origin stats
-          git checkout origin/stats -- stats_cache.enc
+          git checkout origin/stats -- stats_cache.enc || true
           mkdir -p stats_output
-          mv stats_cache.enc stats_output/stats_cache.enc
+          if [ -f stats_cache.enc ]; then
+            mv stats_cache.enc stats_output/stats_cache.enc
+            echo "Successfully restored cache from stats branch."
+          else
+            echo "No existing cache found. A full backfill will be performed."
+          fi
 
-      - name: Generate SVG
+      - name: Generate Stat SVGs
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }} 
           CACHE_ENCRYPTION_KEY: ${{ secrets.CACHE_ENCRYPTION_KEY }}
-        run: python generate_stats_svg.py
+        run: |
+          go mod download
+          go run main.go
 
       - name: Deploy to stats branch
         uses: peaceiris/actions-gh-pages@v3
