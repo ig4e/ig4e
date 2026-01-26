@@ -27,6 +27,7 @@ const (
 )
 
 func main() {
+	fmt.Println("Starting GitHub Stats Generator...")
 	token := os.Getenv("GH_TOKEN")
 	cacheKey := os.Getenv("CACHE_ENCRYPTION_KEY")
 	if token == "" {
@@ -37,6 +38,7 @@ func main() {
 	ctx := context.Background()
 
 	// 1. Load Cache
+	fmt.Println("Loading cache...")
 	cache := loadCache(cacheKey)
 
 	// 2. Fetch Data
@@ -44,7 +46,7 @@ func main() {
 	
 	// If empty, backfill 1 year
 	if len(cache.DailyStats) == 0 {
-		fmt.Println("Empty cache, performing initial backfill...")
+		fmt.Println("Empty cache, performing initial backfill (1 year)...")
 		backfill(ctx, client, cache, now.AddDate(-1, 0, 0), now)
 	} else {
 		// Update from last update or last 7 days to be safe
@@ -57,19 +59,25 @@ func main() {
 	}
 
 	cache.LastUpdate = now
+	fmt.Println("Saving updated cache...")
 	saveCache(cache, cacheKey)
 
 	// 3. Generate SVGs
+	fmt.Println("Generating SVG dashboards...")
 	generateAllSVGs(cache)
 
 	// 4. Generate README for stats branch
+	fmt.Println("Updating stats branch README...")
 	generateStatsReadme(cache)
+	
+	fmt.Println("Done!")
 }
 
 func loadCache(key string) *stats.Cache {
 	path := filepath.Join(OutputDir, CacheFile)
 	data, err := os.ReadFile(path)
 	if err != nil {
+		fmt.Println("No cache file found, starting fresh.")
 		return stats.NewCache()
 	}
 
@@ -85,8 +93,16 @@ func loadCache(key string) *stats.Cache {
 
 	var cache stats.Cache
 	if err := json.Unmarshal(data, &cache); err != nil {
+		fmt.Printf("Warning: Cache unmarshal failed: %v. Starting fresh.\n", err)
 		return stats.NewCache()
 	}
+
+	if cache.Version != stats.NewCache().Version {
+		fmt.Printf("Cache version mismatch (%s vs %s). Invalidating cache.\n", cache.Version, stats.NewCache().Version)
+		return stats.NewCache()
+	}
+
+	fmt.Printf("Cache loaded: %d daily records, %d repos processed.\n", len(cache.DailyStats), len(cache.ProcessedRepos))
 	return &cache
 }
 
@@ -112,6 +128,7 @@ func padKey(key string) string {
 }
 
 func fetchRange(ctx context.Context, client *api.Client, cache *stats.Cache, from, to time.Time) {
+	fmt.Printf("Fetching contribution calendar from %s to %s via GraphQL...\n", from.Format("2006-01-02"), to.Format("2006-01-02"))
 	resp, err := client.FetchContributions(ctx, from, to)
 	if err != nil {
 		log.Printf("Error fetching contributions: %v", err)
@@ -187,10 +204,13 @@ func fetchCommitDetails(ctx context.Context, client *api.Client, cache *stats.Ca
 		opts.Page = resp.NextPage
 	}
 
+	fmt.Printf("Found %d repositories to inspect for deep commit data.\n", len(allRepos))
+
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 	semaphore := make(chan struct{}, 3) // Throttled to avoid secondary rate limits
 
+	processedCount := 0
 	for _, repo := range allRepos {
 		if repo.Name == nil || repo.Owner == nil || repo.Owner.Login == nil {
 			continue
@@ -201,6 +221,14 @@ func fetchCommitDetails(ctx context.Context, client *api.Client, cache *stats.Ca
 			defer wg.Done()
 			semaphore <- struct{}{}
 			defer func() { <-semaphore }()
+
+			fullName := *r.FullName
+			mu.Lock()
+			processedCount++
+			if processedCount%10 == 0 || processedCount == len(allRepos) {
+				fmt.Printf("[%d/%d] Processing %s...\n", processedCount, len(allRepos), fullName)
+			}
+			mu.Unlock()
 
 			commits, resp, err := client.REST.Repositories.ListCommits(ctx, *r.Owner.Login, *r.Name, &github.CommitsListOptions{
 				Author: *user.Login,
@@ -262,6 +290,7 @@ func backfill(ctx context.Context, client *api.Client, cache *stats.Cache, from,
 func generateAllSVGs(cache *stats.Cache) {
 	now := time.Now()
 
+	fmt.Println("Generating main summary SVGs...")
 	// 1. Lifetime
 	genSummary(cache, "Lifetime Stats", time.Time{}, "lifetime.svg")
 
@@ -271,6 +300,7 @@ func generateAllSVGs(cache *stats.Cache) {
 	genSummary(cache, "Weekly Stats", now.AddDate(0, 0, -7), "weekly.svg")
 
 	// 3. Yearly Archive (Specific Years)
+	fmt.Println("Generating yearly archive SVGs...")
 	years := make(map[int]bool)
 	for dateStr := range cache.DailyStats {
 		dt, err := time.Parse("2006-01-02", dateStr)
@@ -280,6 +310,7 @@ func generateAllSVGs(cache *stats.Cache) {
 	}
 
 	for year := range years {
+		fmt.Printf("Processing archive for year %d...\n", year)
 		var commits, prs, issues, reviews, totalAdditions, activeDays, private int
 		langs := make(map[string]int64)
 
@@ -309,6 +340,7 @@ func generateAllSVGs(cache *stats.Cache) {
 }
 
 func genSummary(cache *stats.Cache, title string, since time.Time, filename string) {
+	fmt.Printf("Generating %s -> %s\n", title, filename)
 	var commits, prs, issues, reviews, totalAdditions, activeDays, private int
 	langs := make(map[string]int64)
 

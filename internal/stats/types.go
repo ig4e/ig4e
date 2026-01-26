@@ -31,7 +31,7 @@ type Cache struct {
 
 func NewCache() *Cache {
 	return &Cache{
-		Version:        "3.0.0",
+		Version:        "3.1.0",
 		DailyStats:     make(map[string]DailyStats),
 		ProcessedRepos: make(map[string]bool),
 	}
