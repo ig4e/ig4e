@@ -67,25 +67,32 @@ def fetch_historical_stats(user, cache):
     This can be very slow and hit rate limits, so we cache repo progress.
     """
     print("Fetching historical stats from repositories... (This may take a while)")
-    repos = user.get_repos(type='owner')
-    for repo in repos:
-        if repo.fork: continue
+    repos = list(user.get_repos(type='owner'))
+    total_repos = len(repos)
+    
+    for i, repo in enumerate(repos):
+        if repo.fork: 
+            print(f"[{i+1}/{total_repos}] Skipping fork: {repo.full_name}")
+            continue
+            
         if repo.full_name in cache["processed_repos"] and cache["processed_repos"][repo.full_name] == "COMPLETED":
+            print(f"[{i+1}/{total_repos}] Already processed: {repo.full_name}")
             continue
         
-        print(f" Processing repo: {repo.full_name}")
+        print(f"[{i+1}/{total_repos}] Processing: {repo.full_name}...")
         try:
-            # We get all commits for the user
-            commits = repo.get_commits(author=user.login)
-            for commit in commits:
+            commits = list(repo.get_commits(author=user.login))
+            num_commits = len(commits)
+            for j, commit in enumerate(commits):
+                if j % 10 == 0: # Log every 10 commits to avoid flooding
+                    print(f"  -> Fetching commit {j+1}/{num_commits} in {repo.name}...")
+                
                 date_str = commit.commit.author.date.strftime("%Y-%m-%d")
-                # We fetch lines from commit stats
-                # Note: This is an expensive API call
                 add_stat(cache, date_str, 1, commit.stats.additions)
             
             cache["processed_repos"][repo.full_name] = "COMPLETED"
-            # Periodic save in case of timeout
             save_cache(cache)
+            print(f"  ✓ Finished {repo.full_name}")
         except GithubException as e:
             print(f"  Error processing {repo.full_name}: {e}")
             continue
@@ -94,14 +101,18 @@ def update_from_events(user, cache):
     """
     Incremental update using the Events API (last 90 days / 300 events).
     """
-    print("Updating stats from recent events...")
+    print("\nUpdating stats from recent events...")
     last_update = cache.get("last_update")
     if last_update:
         last_update_dt = datetime.datetime.fromisoformat(last_update.replace("Z", "+00:00"))
     else:
         last_update_dt = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=90)
 
-    for event in user.get_events():
+    events = list(user.get_events())
+    print(f"Checking {len(events)} recent events...")
+    
+    processed_count = 0
+    for event in events:
         if event.created_at < last_update_dt:
             break
         
@@ -111,17 +122,20 @@ def update_from_events(user, cache):
             repo_name = event.repo.name
             date_str = event.created_at.strftime("%Y-%m-%d")
             
+            print(f"  Processing push to {repo_name} on {date_str} ({num_commits} commits)...")
             try:
                 repo = g.get_repo(repo_name)
                 total_lines = 0
-                for commit_payload in commits_list:
+                for i, commit_payload in enumerate(commits_list):
                     c = repo.get_commit(commit_payload['sha'])
                     total_lines += c.stats.additions
                 
                 add_stat(cache, date_str, num_commits, total_lines)
+                processed_count += 1
             except Exception as e:
                 print(f"  Skipped repo {repo_name} event: {e}")
 
+    print(f"Done. Processed {processed_count} new push events.")
     cache["last_update"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 def generate_svg(title, commits, lines, filename):
