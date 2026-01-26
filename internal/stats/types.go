@@ -16,6 +16,7 @@ type DailyStats struct {
 	Reviews      int                  `json:"reviews"`
 	Additions    int                  `json:"additions"`
 	Deletions    int                  `json:"deletions"`
+	Private      int                  `json:"private"`    // Restricted contributions
 	LangLines    map[string]int       `json:"lang_lines"` // Lines added per language
 	RepoByteSize map[string]int64     `json:"repo_bytes"` // Total bytes per language (composition)
 }

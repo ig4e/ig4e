@@ -90,7 +90,7 @@ type RepoQuery struct {
 					}
 				} `graphql:"languages(first: 10, orderBy: {field: SIZE, direction: DESC})"`
 			}
-		} `graphql:"repositories(first: 100, ownerAffiliations: OWNER, isFork: false)"`
+		} `graphql:"repositories(first: 100, ownerAffiliations: [OWNER, COLLABORATOR, ORGANIZATION_MEMBER])"`
 	}
 }
 

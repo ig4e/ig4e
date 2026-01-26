@@ -61,6 +61,9 @@ func main() {
 
 	// 3. Generate SVGs
 	generateAllSVGs(cache)
+
+	// 4. Generate README for stats branch
+	generateStatsReadme(cache)
 }
 
 func loadCache(key string) *stats.Cache {
@@ -134,6 +137,7 @@ func fetchRange(ctx context.Context, client *api.Client, cache *stats.Cache, fro
 	s.PRs = int(resp.Viewer.ContributionsCollection.TotalPullRequestContributions)
 	s.Issues = int(resp.Viewer.ContributionsCollection.TotalIssueContributions)
 	s.Reviews = int(resp.Viewer.ContributionsCollection.TotalPullRequestReviewContributions)
+	s.Private = int(resp.Viewer.ContributionsCollection.RestrictedContributionsCount)
 
 	// 2.5 Fetch Detailed Commit Stats (Additions/Deletions per Language)
 	fetchCommitDetails(ctx, client, cache, from, to)
@@ -156,24 +160,38 @@ func fetchRange(ctx context.Context, client *api.Client, cache *stats.Cache, fro
 }
 
 func fetchCommitDetails(ctx context.Context, client *api.Client, cache *stats.Cache, from, to time.Time) {
-	fmt.Println("Fetching detailed commit activity in parallel...")
+	fmt.Println("Fetching detailed commit activity in parallel (including Orgs and Collaborations)...")
 	user, _, err := client.REST.Users.Get(ctx, "")
 	if err != nil || user == nil || user.Login == nil {
 		fmt.Printf("Error: Could not retrieve user profile: %v\n", err)
 		return
 	}
 
-	repos, _, err := client.REST.Repositories.List(ctx, "", &github.RepositoryListOptions{Type: "owner"})
-	if err != nil {
-		fmt.Printf("Error: Could not list repositories: %v\n", err)
-		return
+	// Fetch all repositories (Owner, Collaborator, Organization Member)
+	var allRepos []*github.Repository
+	opts := &github.RepositoryListOptions{
+		Affiliation: "owner,collaborator,organization_member",
+		ListOptions: github.ListOptions{PerPage: 100},
+	}
+
+	for {
+		repos, resp, err := client.REST.Repositories.List(ctx, "", opts)
+		if err != nil {
+			fmt.Printf("Error listing repos: %v\n", err)
+			break
+		}
+		allRepos = append(allRepos, repos...)
+		if resp.NextPage == 0 {
+			break
+		}
+		opts.Page = resp.NextPage
 	}
 
 	var wg sync.WaitGroup
 	var mu sync.Mutex
-	semaphore := make(chan struct{}, 5) // Limit concurrency to avoid secondary rate limits
+	semaphore := make(chan struct{}, 3) // Throttled to avoid secondary rate limits
 
-	for _, repo := range repos {
+	for _, repo := range allRepos {
 		if repo.Name == nil || repo.Owner == nil || repo.Owner.Login == nil {
 			continue
 		}
@@ -181,15 +199,18 @@ func fetchCommitDetails(ctx context.Context, client *api.Client, cache *stats.Ca
 		wg.Add(1)
 		go func(r *github.Repository) {
 			defer wg.Done()
-			semaphore <- struct{}{}        // Acquire
-			defer func() { <-semaphore }() // Release
+			semaphore <- struct{}{}
+			defer func() { <-semaphore }()
 
-			commits, _, err := client.REST.Repositories.ListCommits(ctx, *r.Owner.Login, *r.Name, &github.CommitsListOptions{
+			commits, resp, err := client.REST.Repositories.ListCommits(ctx, *r.Owner.Login, *r.Name, &github.CommitsListOptions{
 				Author: *user.Login,
 				Since:  from,
 				Until:  to,
 			})
 			if err != nil {
+				if resp != nil && resp.StatusCode == 403 {
+					fmt.Printf("Throttled: Skipping detailed stats for %s/%s\n", *r.Owner.Login, *r.Name)
+				}
 				return
 			}
 
@@ -244,18 +265,51 @@ func generateAllSVGs(cache *stats.Cache) {
 	// 1. Lifetime
 	genSummary(cache, "Lifetime Stats", time.Time{}, "lifetime.svg")
 
-	// 2. Yearly (Last 365 days)
+	// 2. Ranges
 	genSummary(cache, "Yearly Stats", now.AddDate(-1, 0, 0), "yearly.svg")
-
-	// 3. Monthly (Last 30 days)
 	genSummary(cache, "Monthly Stats", now.AddDate(0, -1, 0), "monthly.svg")
-
-	// 4. Weekly (Last 7 days)
 	genSummary(cache, "Weekly Stats", now.AddDate(0, 0, -7), "weekly.svg")
+
+	// 3. Yearly Archive (Specific Years)
+	years := make(map[int]bool)
+	for dateStr := range cache.DailyStats {
+		dt, err := time.Parse("2006-01-02", dateStr)
+		if err == nil {
+			years[dt.Year()] = true
+		}
+	}
+
+	for year := range years {
+		var commits, prs, issues, reviews, totalAdditions, activeDays, private int
+		langs := make(map[string]int64)
+
+		for dateStr, s := range cache.DailyStats {
+			dt, _ := time.Parse("2006-01-02", dateStr)
+			if dt.Year() != year {
+				continue
+			}
+			if s.Commits > 0 || s.PRs > 0 || s.Issues > 0 || s.Private > 0 {
+				activeDays++
+			}
+			commits += s.Commits
+			prs += s.PRs
+			issues += s.Issues
+			reviews += s.Reviews
+			totalAdditions += s.Additions
+			private += s.Private
+			for l, lines := range s.LangLines {
+				langs[l] += int64(lines)
+			}
+		}
+
+		filename := fmt.Sprintf("years/%d.svg", year)
+		os.MkdirAll(filepath.Join(OutputDir, "years"), 0755)
+		renderSVG(fmt.Sprintf("Stats for %d", year), commits, prs, issues, reviews, totalAdditions, activeDays, private, cache.TotalStars, langs, filename)
+	}
 }
 
 func genSummary(cache *stats.Cache, title string, since time.Time, filename string) {
-	var commits, prs, issues, reviews, totalAdditions int
+	var commits, prs, issues, reviews, totalAdditions, activeDays, private int
 	langs := make(map[string]int64)
 
 	for dateStr, s := range cache.DailyStats {
@@ -263,11 +317,15 @@ func genSummary(cache *stats.Cache, title string, since time.Time, filename stri
 		if !since.IsZero() && dt.Before(since) {
 			continue
 		}
+		if s.Commits > 0 || s.PRs > 0 || s.Issues > 0 || s.Private > 0 {
+			activeDays++
+		}
 		commits += s.Commits
 		prs += s.PRs
 		issues += s.Issues
 		reviews += s.Reviews
 		totalAdditions += s.Additions
+		private += s.Private
 
 		// Use LangLines (activity) for summary if available, else RepoByteSize (composition)
 		for l, lines := range s.LangLines {
@@ -280,10 +338,10 @@ func genSummary(cache *stats.Cache, title string, since time.Time, filename stri
 		}
 	}
 
-	renderSVG(title, commits, prs, issues, reviews, totalAdditions, cache.TotalStars, langs, filename)
+	renderSVG(title, commits, prs, issues, reviews, totalAdditions, activeDays, private, cache.TotalStars, langs, filename)
 }
 
-func renderSVG(title string, commits, prs, issues, reviews, lines, stars int, langs map[string]int64, filename string) {
+func renderSVG(title string, commits, prs, issues, reviews, lines, activeDays, private, stars int, langs map[string]int64, filename string) {
 	funcMap := template.FuncMap{
 		"mul": templates.Mul,
 		"add": templates.Add,
@@ -311,22 +369,27 @@ func renderSVG(title string, commits, prs, issues, reviews, lines, stars int, la
 	}
 	sort.Slice(sortedLangs, func(i, j int) bool { return sortedLangs[i].size > sortedLangs[j].size })
 
-	if len(sortedLangs) > 5 {
-		sortedLangs = sortedLangs[:5]
-	}
-
 	var svgLangs []templates.SVGLang
 	offset := 0.0
-	for _, l := range sortedLangs {
+	otherLines := 0.0
+	for i, l := range sortedLangs {
 		width := (float64(l.size) / float64(totalSize)) * 380
-		svgLangs = append(svgLangs, templates.SVGLang{
-			Name:   l.name,
-			Size:   l.size,
-			Color:  l.color,
-			Width:  width,
-			Offset: offset,
-		})
-		offset += width
+		percent := (float64(l.size) / float64(totalSize)) * 100
+		
+		if i < 7 { // Keep top 7 in the bar
+			svgLangs = append(svgLangs, templates.SVGLang{
+				Name:      l.name,
+				Size:      l.size,
+				Color:     l.color,
+				Width:     width,
+				Offset:    offset,
+				LineCount: fmt.Sprintf("%d", l.size),
+				Percent:   fmt.Sprintf("%.1f", percent),
+			})
+			offset += width
+		} else {
+			otherLines += float64(l.size)
+		}
 	}
 
 	data := templates.SVGData{
@@ -337,6 +400,9 @@ func renderSVG(title string, commits, prs, issues, reviews, lines, stars int, la
 		Reviews:     fmt.Sprintf("%d", reviews),
 		Lines:       fmt.Sprintf("%d", lines),
 		Stars:       fmt.Sprintf("%d", stars),
+		ActiveDays:  fmt.Sprintf("%d", activeDays),
+		Private:     fmt.Sprintf("%d", private),
+		OtherLines:  fmt.Sprintf("%.0f", otherLines),
 		Languages:   svgLangs,
 		AccentColor: "#58a6ff",
 		TextColor:   "#c9d1d9",
@@ -351,4 +417,40 @@ func renderSVG(title string, commits, prs, issues, reviews, lines, stars int, la
 	defer f.Close()
 
 	tmpl.Execute(f, data)
+}
+
+func generateStatsReadme(cache *stats.Cache) {
+	fmt.Println("Generating stats branch README...")
+	
+	years := make([]int, 0)
+	yearSet := make(map[int]bool)
+	for dateStr := range cache.DailyStats {
+		dt, err := time.Parse("2006-01-02", dateStr)
+		if err == nil {
+			if !yearSet[dt.Year()] {
+				yearSet[dt.Year()] = true
+				years = append(years, dt.Year())
+			}
+		}
+	}
+	sort.Sort(sort.Reverse(sort.IntSlice(years)))
+
+	readme := "# 📊 GitHub Statistics Dashboard\n\n"
+	readme += "This branch is automatically updated with my latest GitHub activity metrics.\n\n"
+	
+	readme += "## 📅 Summary Stats\n"
+	readme += "![Lifetime Stats](lifetime.svg)\n\n"
+	readme += "| Yearly | Monthly | Weekly |\n"
+	readme += "| :---: | :---: | :---: |\n"
+	readme += "| ![Yearly Stats](yearly.svg) | ![Monthly Stats](monthly.svg) | ![Weekly Stats](weekly.svg) |\n\n"
+
+	readme += "## 🗄️ Yearly Archive\n"
+	for _, year := range years {
+		readme += fmt.Sprintf("- [%d Statistics](years/%d.svg)\n", year, year)
+	}
+
+	readme += "\n---\n"
+	readme += fmt.Sprintf("*Last updated: %s*", time.Now().Format("2006-01-02 15:04:05"))
+
+	os.WriteFile(filepath.Join(OutputDir, "README.md"), []byte(readme), 0644)
 }
