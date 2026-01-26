@@ -1,22 +1,85 @@
 
-<svg width="400" height="240" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+<svg width="450" height="300" viewBox="0 0 450 300" fill="none" xmlns="http://www.w3.org/2000/svg">
   <style>
-    .header { font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
-    .stat { font: 600 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
-    .number { font: 700 24px 'Segoe UI', Ubuntu, Sans-Serif; fill: #fff; }
+    .header { font: 700 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
+    .stat-label { font: 600 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; opacity: 0.8; }
+    .stat-value { font: 700 22px 'Segoe UI', Ubuntu, Sans-Serif; fill: #fff; }
+    .lang-label { font: 400 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
+    .bento { fill: #0d1117; stroke: #30363d; stroke-width: 1; }
   </style>
-  <rect x="0" y="0" width="400" height="240" rx="5" ry="5" fill="#1f1f1f" stroke="#1f1f1f" />
   
-  <!-- Title -->
-  <text x="25" y="35" class="header">Monthly Stats</text>
+  <rect width="450" height="300" rx="12" fill="#0d1117" />
+  <rect x="15" y="15" width="420" height="270" rx="8" class="bento" />
+
   
-  <!-- Commits Stat -->
-  <text x="25" y="80" class="stat">Commits Pushed</text>
-  <text x="25" y="105" class="number">109</text>
+  <text x="35" y="50" class="header">Monthly Stats</text>
+
   
-  <!-- Lines Stat -->
-  <text x="200" y="80" class="stat">Lines Added</text>
-  <text x="200" y="105" class="number">215,934</text>
+  <g transform="translate(35, 75)">
+    
+    <text x="0" y="0" class="stat-label">Commits</text>
+    <text x="0" y="25" class="stat-value">102</text>
+    
+    <text x="200" y="0" class="stat-label">Pull Requests</text>
+    <text x="200" y="25" class="stat-value">16</text>
+    
+    
+    <text x="0" y="60" class="stat-label">Issues / Reviews</text>
+    <text x="0" y="85" class="stat-value">1 / 0</text>
+    
+    <text x="200" y="60" class="stat-label">Lines Added</text>
+    <text x="200" y="85" class="stat-value">4649</text>
+
+    
+    <text x="210" y="115" class="stat-label" style="text-anchor: middle;">Total Stars: 11</text>
+  </g>
+
   
-  <g transform="translate(25, 130)"><text x="0" y="0" class="stat">Top Languages (Lines)</text><text x="5" y="25" class="stat" style="font-weight:400">TypeScript: 128,927</text><text x="5" y="45" class="stat" style="font-weight:400">YAML: 49,943</text><text x="5" y="65" class="stat" style="font-weight:400">HTML: 10,529</text><text x="5" y="85" class="stat" style="font-weight:400">Markdown: 10,424</text><text x="5" y="105" class="stat" style="font-weight:400">Other: 9,313</text></g>
+  <g transform="translate(35, 200)">
+    <text x="0" y="0" class="stat-label">Top Languages</text>
+    <rect x="0" y="15" width="380" height="8" rx="4" fill="#333" />
+    <g transform="translate(0, 15)">
+      
+        <rect x="0" y="0" width="322.35536076082525" height="8" fill="#3178c6" rx="4" />
+      
+        <rect x="322.35536076082525" y="0" width="23.67721524034813" height="8" fill="#e34c26"  />
+      
+        <rect x="346.03257600117337" y="0" width="21.416054900257773" height="8" fill="#f1e05a"  />
+      
+        <rect x="367.44863090143116" y="0" width="8.448007453422482" height="8" fill="#fcb32c"  />
+      
+        <rect x="375.8966383548536" y="0" width="1.9821354972945415" height="8" fill="#663399"  />
+      
+    </g>
+    
+    
+    <g transform="translate(0, 40)">
+      
+        
+        <circle cx="0" cy="0" r="4" fill="#3178c6" />
+        <text x="10" y="4" class="lang-label">TypeScript</text>
+        
+      
+        
+        <circle cx="80" cy="0" r="4" fill="#e34c26" />
+        <text x="90" y="4" class="lang-label">HTML</text>
+        
+      
+        
+        <circle cx="160" cy="0" r="4" fill="#f1e05a" />
+        <text x="170" y="4" class="lang-label">JavaScript</text>
+        
+      
+        
+        <circle cx="240" cy="0" r="4" fill="#fcb32c" />
+        <text x="250" y="4" class="lang-label">MDX</text>
+        
+      
+        
+        <circle cx="320" cy="0" r="4" fill="#663399" />
+        <text x="330" y="4" class="lang-label">CSS</text>
+        
+      
+    </g>
+  </g>
 </svg>
