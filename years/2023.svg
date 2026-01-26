@@ -1,20 +1,22 @@
 
-<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+<svg width="400" height="240" viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
   <style>
     .header { font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
     .stat { font: 600 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
     .number { font: 700 24px 'Segoe UI', Ubuntu, Sans-Serif; fill: #fff; }
   </style>
-  <rect x="0" y="0" width="400" height="120" rx="5" ry="5" fill="#1f1f1f" stroke="#1f1f1f" />
+  <rect x="0" y="0" width="400" height="240" rx="5" ry="5" fill="#1f1f1f" stroke="#1f1f1f" />
   
   <!-- Title -->
   <text x="25" y="35" class="header">Stats for 2023</text>
   
   <!-- Commits Stat -->
   <text x="25" y="80" class="stat">Commits Pushed</text>
-  <text x="25" y="105" class="number">480</text>
+  <text x="25" y="105" class="number">489</text>
   
   <!-- Lines Stat -->
   <text x="200" y="80" class="stat">Lines Added</text>
-  <text x="200" y="105" class="number">651,876</text>
+  <text x="200" y="105" class="number">650,862</text>
+  
+  <g transform="translate(25, 130)"><text x="0" y="0" class="stat">Top Languages (Lines)</text><text x="5" y="25" class="stat" style="font-weight:400">TypeScript: 277,041</text><text x="5" y="45" class="stat" style="font-weight:400">YAML: 145,454</text><text x="5" y="65" class="stat" style="font-weight:400">JavaScript: 122,291</text><text x="5" y="85" class="stat" style="font-weight:400">JSON: 86,432</text><text x="5" y="105" class="stat" style="font-weight:400">Other: 14,192</text></g>
 </svg>
