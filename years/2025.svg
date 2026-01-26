@@ -1,0 +1,20 @@
+
+<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .header { font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
+    .stat { font: 600 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
+    .number { font: 700 24px 'Segoe UI', Ubuntu, Sans-Serif; fill: #fff; }
+  </style>
+  <rect x="0" y="0" width="400" height="120" rx="5" ry="5" fill="#1f1f1f" stroke="#1f1f1f" />
+  
+  <!-- Title -->
+  <text x="25" y="35" class="header">Stats for 2025</text>
+  
+  <!-- Commits Stat -->
+  <text x="25" y="80" class="stat">Commits Pushed</text>
+  <text x="25" y="105" class="number">569</text>
+  
+  <!-- Lines Stat -->
+  <text x="200" y="80" class="stat">Lines Added</text>
+  <text x="200" y="105" class="number">745,093</text>
+</svg>
