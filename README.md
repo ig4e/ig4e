@@ -278,6 +278,10 @@ In 2018, I took the plunge into the world of custom Discord bots, immersing myse
 [![ig4e's wakatime stats](https://github-readme-stats.vercel.app/api/wakatime?username=ig4e&border_radius=5px&theme=dark&bg_color=1f1f1f&border_color=1f1f1f&icon_color=58a6ff&show_icons=true&disable_animations=true&custom_title=Weekly%20Stats)](https://wakatime.com/@ig4e)
 [![ig4e's GitHub stats](https://github-readme-stats.vercel.app/api?username=ig4e&count_private=true&border_radius=5px&theme=dark&bg_color=1f1f1f&border_color=1f1f1f&icon_color=58a6ff&show_icons=true&disable_animations=true&custom_title=Weekly%20Stats)](https://github.com/anuraghazra/github-readme-stats)
 
+<p align="left">
+  <img src="./weekly_stats.svg" alt="Weekly Lines of Code" height="120" />
+</p>
+
 <p align="center">
     <img src="https://mayu.due.moe/get/@ig4e-github?theme=rule34&padding=6">
 </p>
