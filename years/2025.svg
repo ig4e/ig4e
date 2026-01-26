@@ -13,23 +13,23 @@
   <rect x="15" y="15" width="420" height="310" rx="8" class="bento" />
 
   
-  <text x="35" y="50" class="header">Lifetime Stats</text>
+  <text x="35" y="50" class="header">Stats for 2025</text>
 
   
   <g transform="translate(35, 75)">
     
     <text x="0" y="0" class="stat-label">Commits</text>
-    <text x="0" y="22" class="stat-value">1030</text>
+    <text x="0" y="22" class="stat-value">949</text>
     
     <text x="0" y="55" class="stat-label">Lines Added</text>
-    <text x="0" y="77" class="stat-value">1085874</text>
+    <text x="0" y="77" class="stat-value">908770</text>
     
     <text x="0" y="110" class="stat-label">Active Days</text>
-    <text x="0" y="132" class="stat-value">183</text>
+    <text x="0" y="132" class="stat-value">167</text>
 
     
     <text x="140" y="0" class="stat-label">Pull Requests</text>
-    <text x="140" y="22" class="stat-value">16</text>
+    <text x="140" y="22" class="stat-value">0</text>
     
     <text x="140" y="55" class="stat-label">Reviews</text>
     <text x="140" y="77" class="stat-value">0</text>
@@ -39,7 +39,7 @@
 
     
     <text x="280" y="0" class="stat-label">Issues</text>
-    <text x="280" y="22" class="stat-value">1</text>
+    <text x="280" y="22" class="stat-value">0</text>
 
     <text x="280" y="55" class="stat-label">Private Contribs</text>
     <text x="280" y="77" class="stat-value">0</text>
@@ -51,19 +51,19 @@
     <rect x="0" y="12" width="380" height="8" rx="4" fill="#333" />
     <g transform="translate(0, 12)">
       
-        <rect x="0" y="0" width="194.84966002175616" height="8" fill="#f1e05a" rx="4" />
+        <rect x="0" y="0" width="115.2473343090111" height="8" fill="#3178c6" rx="4" />
       
-        <rect x="194.84966002175616" y="0" width="118.59690616795902" height="8" fill="#3178c6"  />
+        <rect x="115.2473343090111" y="0" width="92.20740121262806" height="8" fill="#3178c6"  />
       
-        <rect x="313.4465661897152" y="0" width="25.841226837143562" height="8" fill="#3572A5"  />
+        <rect x="207.45473552163915" y="0" width="86.41522057286221" height="8" fill="#ff1111"  />
       
-        <rect x="339.28779302685876" y="0" width="8.847304498897065" height="8" fill="#e34c26"  />
+        <rect x="293.8699560945014" y="0" width="28.527702278904453" height="8" fill="#292929"  />
       
-        <rect x="348.13509752575584" y="0" width="8.670148285339675" height="8" fill="#4F5D95"  />
+        <rect x="322.3976583734058" y="0" width="15.518293957767092" height="8" fill="#f1e05a"  />
       
-        <rect x="356.8052458110955" y="0" width="4.373173139331801" height="8" fill="#0096D8"  />
+        <rect x="337.9159523311729" y="0" width="13.66840894835877" height="8" fill="#cccccc"  />
       
-        <rect x="361.17841895042733" y="0" width="2.659902512028808" height="8" fill="#b07219"  />
+        <rect x="351.58436127953166" y="0" width="6.177712732594606" height="8" fill="#FFCFAB"  />
       
     </g>
     
@@ -72,25 +72,25 @@
       
         
         <g transform="translate(0, 0)">
-          <circle cx="4" cy="0" r="4" fill="#f1e05a" />
-          <text x="15" y="4" class="lang-label">JavaScript</text>
-          <text x="380" y="4" class="lang-value" style="text-anchor: end;">22459444 lines (51.3%)</text>
+          <circle cx="4" cy="0" r="4" fill="#3178c6" />
+          <text x="15" y="4" class="lang-label">TypeScript</text>
+          <text x="380" y="4" class="lang-value" style="text-anchor: end;">275614 lines (30.3%)</text>
         </g>
         
       
         
         <g transform="translate(0, 20)">
           <circle cx="4" cy="0" r="4" fill="#3178c6" />
-          <text x="15" y="4" class="lang-label">TypeScript</text>
-          <text x="380" y="4" class="lang-value" style="text-anchor: end;">13670132 lines (31.2%)</text>
+          <text x="15" y="4" class="lang-label">TSX</text>
+          <text x="380" y="4" class="lang-value" style="text-anchor: end;">220514 lines (24.3%)</text>
         </g>
         
       
         
         <g transform="translate(0, 40)">
-          <circle cx="4" cy="0" r="4" fill="#3572A5" />
-          <text x="15" y="4" class="lang-label">Python</text>
-          <text x="380" y="4" class="lang-value" style="text-anchor: end;">2978602 lines (6.8%)</text>
+          <circle cx="4" cy="0" r="4" fill="#ff1111" />
+          <text x="15" y="4" class="lang-label">MiniYAML</text>
+          <text x="380" y="4" class="lang-value" style="text-anchor: end;">206662 lines (22.7%)</text>
         </g>
         
       
@@ -106,7 +106,7 @@
       <g transform="translate(0, 60)">
           <circle cx="4" cy="0" r="4" fill="#666" />
           <text x="15" y="4" class="lang-label">Others</text>
-          <text x="380" y="4" class="lang-value" style="text-anchor: end;">1862884 lines</text>
+          <text x="380" y="4" class="lang-value" style="text-anchor: end;">53182 lines</text>
       </g>
       
     </g>

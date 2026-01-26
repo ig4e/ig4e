@@ -1,15 +1,16 @@
 
-<svg width="450" height="300" viewBox="0 0 450 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="450" height="340" viewBox="0 0 450 340" fill="none" xmlns="http://www.w3.org/2000/svg">
   <style>
     .header { font: 700 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
-    .stat-label { font: 600 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; opacity: 0.8; }
-    .stat-value { font: 700 22px 'Segoe UI', Ubuntu, Sans-Serif; fill: #fff; }
+    .stat-label { font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; opacity: 0.7; }
+    .stat-value { font: 700 20px 'Segoe UI', Ubuntu, Sans-Serif; fill: #fff; }
     .lang-label { font: 400 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
+    .lang-value { font: 700 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #fff; opacity: 0.9; }
     .bento { fill: #0d1117; stroke: #30363d; stroke-width: 1; }
   </style>
   
-  <rect width="450" height="300" rx="12" fill="#0d1117" />
-  <rect x="15" y="15" width="420" height="270" rx="8" class="bento" />
+  <rect width="450" height="340" rx="12" fill="#0d1117" />
+  <rect x="15" y="15" width="420" height="310" rx="8" class="bento" />
 
   
   <text x="35" y="50" class="header">Weekly Stats</text>
@@ -18,37 +19,51 @@
   <g transform="translate(35, 75)">
     
     <text x="0" y="0" class="stat-label">Commits</text>
-    <text x="0" y="25" class="stat-value">42</text>
+    <text x="0" y="22" class="stat-value">44</text>
     
-    <text x="200" y="0" class="stat-label">Pull Requests</text>
-    <text x="200" y="25" class="stat-value">16</text>
+    <text x="0" y="55" class="stat-label">Lines Added</text>
+    <text x="0" y="77" class="stat-value">53921</text>
     
-    
-    <text x="0" y="60" class="stat-label">Issues / Reviews</text>
-    <text x="0" y="85" class="stat-value">1 / 0</text>
-    
-    <text x="200" y="60" class="stat-label">Lines Added</text>
-    <text x="200" y="85" class="stat-value">0</text>
+    <text x="0" y="110" class="stat-label">Active Days</text>
+    <text x="0" y="132" class="stat-value">5</text>
 
     
-    <text x="210" y="115" class="stat-label" style="text-anchor: middle;">Total Stars: 11</text>
+    <text x="140" y="0" class="stat-label">Pull Requests</text>
+    <text x="140" y="22" class="stat-value">16</text>
+    
+    <text x="140" y="55" class="stat-label">Reviews</text>
+    <text x="140" y="77" class="stat-value">0</text>
+    
+    <text x="140" y="110" class="stat-label">Total Stars</text>
+    <text x="140" y="132" class="stat-value">8</text>
+
+    
+    <text x="280" y="0" class="stat-label">Issues</text>
+    <text x="280" y="22" class="stat-value">1</text>
+
+    <text x="280" y="55" class="stat-label">Private Contribs</text>
+    <text x="280" y="77" class="stat-value">0</text>
   </g>
 
   
-  <g transform="translate(35, 200)">
-    <text x="0" y="0" class="stat-label">Top Languages</text>
-    <rect x="0" y="15" width="380" height="8" rx="4" fill="#333" />
-    <g transform="translate(0, 15)">
+  <g transform="translate(35, 230)">
+    <text x="0" y="0" class="stat-label">Language Activity Breakdown</text>
+    <rect x="0" y="12" width="380" height="8" rx="4" fill="#333" />
+    <g transform="translate(0, 12)">
       
-        <rect x="0" y="0" width="322.4508975474805" height="8" fill="#3178c6" rx="4" />
+        <rect x="0" y="0" width="199.21039096177697" height="8" fill="#f1e05a" rx="4" />
       
-        <rect x="322.4508975474805" y="0" width="23.68626871696613" height="8" fill="#e34c26"  />
+        <rect x="199.21039096177697" y="0" width="118.41230848425556" height="8" fill="#3178c6"  />
       
-        <rect x="346.13716626444665" y="0" width="21.40808533786728" height="8" fill="#f1e05a"  />
+        <rect x="317.6226994460325" y="0" width="26.464738497832233" height="8" fill="#3572A5"  />
       
-        <rect x="367.54525160231395" y="0" width="8.451237725106541" height="8" fill="#fcb32c"  />
+        <rect x="344.08743794386476" y="0" width="9.06077723978089" height="8" fill="#e34c26"  />
       
-        <rect x="375.9964893274205" y="0" width="1.9828934081044194" height="8" fill="#663399"  />
+        <rect x="353.1482151836457" y="0" width="8.879346501425871" height="8" fill="#4F5D95"  />
+      
+        <rect x="362.02756168507153" y="0" width="4.4786915214027525" height="8" fill="#0096D8"  />
+      
+        <rect x="366.5062532064743" y="0" width="2.724082136432754" height="8" fill="#b07219"  />
       
     </g>
     
@@ -56,29 +71,43 @@
     <g transform="translate(0, 40)">
       
         
-        <circle cx="0" cy="0" r="4" fill="#3178c6" />
-        <text x="10" y="4" class="lang-label">TypeScript</text>
+        <g transform="translate(0, 0)">
+          <circle cx="4" cy="0" r="4" fill="#f1e05a" />
+          <text x="15" y="4" class="lang-label">JavaScript</text>
+          <text x="380" y="4" class="lang-value" style="text-anchor: end;">22421097 lines (52.4%)</text>
+        </g>
         
       
         
-        <circle cx="80" cy="0" r="4" fill="#e34c26" />
-        <text x="90" y="4" class="lang-label">HTML</text>
+        <g transform="translate(0, 20)">
+          <circle cx="4" cy="0" r="4" fill="#3178c6" />
+          <text x="15" y="4" class="lang-label">TypeScript</text>
+          <text x="380" y="4" class="lang-value" style="text-anchor: end;">13327286 lines (31.2%)</text>
+        </g>
         
       
         
-        <circle cx="160" cy="0" r="4" fill="#f1e05a" />
-        <text x="170" y="4" class="lang-label">JavaScript</text>
+        <g transform="translate(0, 40)">
+          <circle cx="4" cy="0" r="4" fill="#3572A5" />
+          <text x="15" y="4" class="lang-label">Python</text>
+          <text x="380" y="4" class="lang-value" style="text-anchor: end;">2978602 lines (7.0%)</text>
+        </g>
         
       
         
-        <circle cx="240" cy="0" r="4" fill="#fcb32c" />
-        <text x="250" y="4" class="lang-label">MDX</text>
+      
         
       
         
-        <circle cx="320" cy="0" r="4" fill="#663399" />
-        <text x="330" y="4" class="lang-label">CSS</text>
+      
         
+      
+      
+      <g transform="translate(0, 60)">
+          <circle cx="4" cy="0" r="4" fill="#666" />
+          <text x="15" y="4" class="lang-label">Others</text>
+          <text x="380" y="4" class="lang-value" style="text-anchor: end;">1212124 lines</text>
+      </g>
       
     </g>
   </g>
