@@ -1,27 +1,35 @@
 import os
 import datetime
-from github import Github
+from github import Github, Auth
 
+# --- Configuration ---
 GH_TOKEN = os.getenv('GH_TOKEN')
 DAYS = 7
+# Colors to match your existing theme (Dark mode)
 BG_COLOR = "#1f1f1f"
 TEXT_COLOR = "#c9d1d9"
-ACCENT_COLOR = "#58a6ff"
+ACCENT_COLOR = "#58a6ff" # GitHub Blue
 BORDER_COLOR = "#1f1f1f" 
 
 if not GH_TOKEN:
     raise Exception("GH_TOKEN is not set")
 
-g = Github(GH_TOKEN)
+# Fix: Use Auth.Token to avoid DeprecationWarning
+auth = Auth.Token(GH_TOKEN)
+g = Github(auth=auth)
 
-start_date = datetime.datetime.now() - datetime.timedelta(days=DAYS)
+# --- Fetch Data ---
+# Fix: Use timezone.utc to make the date "offset-aware"
+start_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=DAYS)
 total_lines = 0
 total_commits = 0
 
 user = g.get_user()
-print(f"Fetching stats for {user.login}...")
+print(f"Fetching stats for {user.login} since {start_date.date()}...")
 
+# Iterate through events (PushEvent)
 for event in user.get_events():
+    # Fix: Ensure event date is compared correctly
     if event.created_at < start_date:
         break
     
@@ -32,11 +40,14 @@ for event in user.get_events():
         try:
             repo = g.get_repo(repo_name)
             for commit_payload in event.payload['commits']:
+                # Fetch full commit details to get line additions
                 c = repo.get_commit(commit_payload['sha'])
                 total_lines += c.stats.additions
-        except Exception:
-            pass
+                print(f" + {c.stats.additions} lines in {repo_name}")
+        except Exception as e:
+            print(f"  Skipped repo {repo_name}: {e}")
 
+# --- Generate SVG ---
 svg_content = f"""
 <svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
   <style>
@@ -59,6 +70,7 @@ svg_content = f"""
 </svg>
 """
 
+# --- Save file ---
 with open("weekly_stats.svg", "w", encoding="utf-8") as f:
     f.write(svg_content)
 
