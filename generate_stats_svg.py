@@ -34,12 +34,13 @@ for event in user.get_events():
         break
     
     if event.type == "PushEvent":
-        total_commits += event.payload['size']
+        commits = event.payload.get('commits', [])
+        total_commits += event.payload.get('size', len(commits))
         repo_name = event.repo.name
         
         try:
             repo = g.get_repo(repo_name)
-            for commit_payload in event.payload['commits']:
+            for commit_payload in commits:
                 # Fetch full commit details to get line additions
                 c = repo.get_commit(commit_payload['sha'])
                 total_lines += c.stats.additions
